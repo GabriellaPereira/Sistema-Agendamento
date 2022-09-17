@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sistemadeagendamentodeconsulta.Models;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FiapSmartCityWebAPI.Repository
@@ -24,6 +26,16 @@ namespace FiapSmartCityWebAPI.Repository
         public async Task<Usuario> Consultar(int id)
         {
             Usuario usuario = await _context.Usuario.FindAsync(id);
+            return usuario;
+        }
+
+        public async Task<Usuario> ConsultarPorNomeESenha(string email, string senha)
+        {
+            var senhaCriptografada = string.Concat(senha.GetHashCode(), ConfigurationManager.AppSettings["Secret"]);
+            
+            Usuario usuario = await _context.Usuario
+                .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senhaCriptografada);
+
             return usuario;
         }
 
