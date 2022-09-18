@@ -25,7 +25,8 @@ namespace Sistemadeagendamentodeconsulta
             services.AddCors();
             services.AddControllers();
 
-            byte[] key = Encoding.ASCII.GetBytes(ConfigurationManager.AppSettings["Secret"]);
+            var keyString = this.Configuration.GetSection("MyConfig").GetValue<string>("Secret");
+            var key = Encoding.ASCII.GetBytes(keyString);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
