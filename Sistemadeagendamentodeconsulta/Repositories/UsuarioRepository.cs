@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Sistemadeagendamentodeconsulta.Models;
 using System.Collections.Generic;
 using System.Configuration;
@@ -10,11 +11,13 @@ namespace FiapSmartCityWebAPI.Repository
     public class UsuarioRepository
     {
         private readonly ModelContext _context;
+        private readonly IConfiguration _configuration;
 
 
-        public UsuarioRepository(ModelContext context)
+        public UsuarioRepository(ModelContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task Inserir(Usuario usuario)
@@ -31,8 +34,9 @@ namespace FiapSmartCityWebAPI.Repository
 
         public async Task<Usuario> ConsultarPorNomeESenha(string email, string senha)
         {
-            var senhaCriptografada = string.Concat(senha.GetHashCode(), ConfigurationManager.AppSettings["Secret"]);
-            
+            var senhaCriptografada = string.Concat(senha.GetHashCode(),_configuration.GetSection("MyConfig").GetValue<string>("Secret"));
+            var a = senha.ToString();
+
             Usuario usuario = await _context.Usuario
                 .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senhaCriptografada);
 

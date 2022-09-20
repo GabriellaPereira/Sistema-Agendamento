@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace Sistemadeagendamentodeconsulta.Models
 {
@@ -24,8 +25,11 @@ namespace Sistemadeagendamentodeconsulta.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string connection = ConfigurationManager.ConnectionStrings["FiapSistemaAgendamento"].ToString();
-                optionsBuilder.UseOracle(connection);
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                          .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                          .AddJsonFile("appsettings.json")
+                          .Build();
+                optionsBuilder.UseOracle(configuration.GetConnectionString("FiapSistemaAgendamento"));
             }
         }
 

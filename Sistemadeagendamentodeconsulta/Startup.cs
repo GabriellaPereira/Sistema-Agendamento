@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Sistemadeagendamentodeconsulta.Models;
 using System.Configuration;
 using System.Text;
 
@@ -24,6 +25,8 @@ namespace Sistemadeagendamentodeconsulta
         {
             services.AddCors();
             services.AddControllers();
+            services.AddDbContext<ModelContext>();
+            
 
             var keyString = this.Configuration.GetSection("MyConfig").GetValue<string>("Secret");
             var key = Encoding.ASCII.GetBytes(keyString);
