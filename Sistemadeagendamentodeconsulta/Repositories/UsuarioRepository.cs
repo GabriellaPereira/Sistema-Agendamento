@@ -1,9 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Sistemadeagendamentodeconsulta.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FiapSmartCityWebAPI.Repository
@@ -20,10 +24,23 @@ namespace FiapSmartCityWebAPI.Repository
             _configuration = configuration;
         }
 
-        public async Task Inserir(Usuario usuario)
+        public async Task<Usuario> Inserir(Usuario usuario)
         {
+            usuario.Senha = VerificarSenhaCriptografada(usuario.Senha);
+
             _context.Usuario.Add(usuario);
             await _context.SaveChangesAsync();
+
+            return usuario;
+        }
+
+        private string VerificarSenhaCriptografada(string senha)
+        {
+            var sha = SHA256.Create();
+            byte[] byteArray = Encoding.Default.GetBytes(senha);
+            byte[] hashedPassword = sha.ComputeHash(byteArray);
+
+            return Convert.ToBase64String(hashedPassword);
         }
 
         public async Task<Usuario> Consultar(int id)
@@ -34,8 +51,7 @@ namespace FiapSmartCityWebAPI.Repository
 
         public async Task<Usuario> ConsultarPorNomeESenha(string email, string senha)
         {
-            var senhaCriptografada = string.Concat(senha.GetHashCode(),_configuration.GetSection("MyConfig").GetValue<string>("Secret"));
-            var a = senha.ToString();
+            var senhaCriptografada = VerificarSenhaCriptografada(senha);
 
             Usuario usuario = await _context.Usuario
                 .FirstOrDefaultAsync(u => u.Email == email && u.Senha == senhaCriptografada);

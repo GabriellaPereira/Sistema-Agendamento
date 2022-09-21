@@ -11,13 +11,13 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class LoginController : ControllerBase
+    public class UsuarioController : ControllerBase
     {
         private UsuarioRepository _usuarioRepository;
         private ModelContext _context;
         private IConfiguration _configuration;
 
-        public LoginController(IConfiguration configuration)
+        public UsuarioController(IConfiguration configuration)
         {
             _configuration = configuration;
             _context = new ModelContext();
@@ -37,8 +37,9 @@ namespace Sistemadeagendamentodeconsulta.Controllers
                 return BadRequest();
             }
 
-            var token = Token.GenerateToken(usuario);
+            var token = Token.GenerateToken(usuario, _configuration);
 
+            usuario.Senha = null;
             var result = new
             {
                 usuario,
@@ -46,6 +47,23 @@ namespace Sistemadeagendamentodeconsulta.Controllers
             };
 
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("Create")]
+        public async Task<IActionResult> CriarUsuario([FromBody] Usuario input)
+        {
+            Usuario usuarioInput = await _usuarioRepository.Inserir(input);
+
+            //Usuario usuarioCriado = await _usuarioRepository.Consultar(usuarioInput.Id);
+
+            //if(usuarioCriado != null)
+            //{
+            //    return new OkObjectResult(usuarioCriado);
+            //}
+            //return BadRequest("Não foi possível criar o usuário");
+
+            return new OkObjectResult("teste");
         }
     }
 }
