@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Sistemadeagendamentodeconsulta.Models;
 using System.Threading.Tasks;
@@ -14,11 +15,14 @@ namespace Sistemadeagendamentodeconsulta.Controllers
     {
         private UsuarioRepository _usuarioRepository;
         private ModelContext _context;
+        private IConfiguration _configuration;
 
-        public LoginController()
+        public LoginController(IConfiguration configuration)
         {
+            _configuration = configuration;
             _context = new ModelContext();
-            _usuarioRepository = new UsuarioRepository(_context);
+            _usuarioRepository = new UsuarioRepository(_context, _configuration);
+            
         }
 
         [HttpPost]
