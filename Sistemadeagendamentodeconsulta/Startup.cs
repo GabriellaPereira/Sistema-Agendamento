@@ -64,6 +64,7 @@ namespace Sistemadeagendamentodeconsulta
             .AllowAnyHeader());
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
