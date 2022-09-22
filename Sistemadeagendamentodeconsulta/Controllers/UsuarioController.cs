@@ -55,15 +55,14 @@ namespace Sistemadeagendamentodeconsulta.Controllers
         {
             Usuario usuarioInput = await _usuarioRepository.Inserir(input);
 
-            //Usuario usuarioCriado = await _usuarioRepository.Consultar(usuarioInput.Id);
+            Usuario usuarioCriado = await _usuarioRepository.Consultar(usuarioInput.Id);
 
-            //if(usuarioCriado != null)
-            //{
-            //    return new OkObjectResult(usuarioCriado);
-            //}
-            //return BadRequest("Não foi possível criar o usuário");
-
-            return new OkObjectResult("teste");
+            if (usuarioCriado != null)
+            {
+                usuarioCriado.Senha = null;
+                return new OkObjectResult(usuarioCriado);
+            }
+            return BadRequest("Não foi possível criar o usuário");
         }
     }
 }

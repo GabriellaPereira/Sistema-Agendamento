@@ -26,12 +26,26 @@ namespace FiapSmartCityWebAPI.Repository
 
         public async Task<Usuario> Inserir(Usuario usuario)
         {
+            usuario.Id = await GerarIdDoUsuario();
             usuario.Senha = VerificarSenhaCriptografada(usuario.Senha);
 
             _context.Usuario.Add(usuario);
             await _context.SaveChangesAsync();
 
             return usuario;
+        }
+
+        private async Task<decimal> GerarIdDoUsuario()
+        {
+            Usuario ultimoUsuarioExistente = await _context.Usuario
+                .OrderByDescending(u => u.Id)
+                .FirstOrDefaultAsync();
+
+            if(ultimoUsuarioExistente != null)
+            {
+                return ultimoUsuarioExistente.Id + 1;
+            }
+            return 1;
         }
 
         private string VerificarSenhaCriptografada(string senha)
@@ -43,7 +57,7 @@ namespace FiapSmartCityWebAPI.Repository
             return Convert.ToBase64String(hashedPassword);
         }
 
-        public async Task<Usuario> Consultar(int id)
+        public async Task<Usuario> Consultar(decimal id)
         {
             Usuario usuario = await _context.Usuario.FindAsync(id);
             return usuario;

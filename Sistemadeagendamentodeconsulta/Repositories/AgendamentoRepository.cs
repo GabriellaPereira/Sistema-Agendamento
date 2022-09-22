@@ -17,21 +17,23 @@ namespace Sistemadeagendamentodeconsulta.Repositories
 
         }
 
-        public async Task Inserir(Agendamento agendamento)
+        public async Task<Agendamento> Inserir(Agendamento agendamento)
 
         {
             _context.Agendamento.Add(agendamento);
             await _context.SaveChangesAsync();
 
+            return agendamento;
+
         }
 
-        public async Task<Agendamento> Consultar(int id)
+        public async Task<Agendamento> Consultar(decimal id)
         {
             Agendamento agendamento = await _context.Agendamento.FindAsync(id);
             return agendamento;
         }
 
-        public async Task <IList<Agendamento>> Listar()
+        public async Task <List<Agendamento>> Listar()
         {
             return await _context.Agendamento.ToListAsync();
         }
@@ -47,19 +49,15 @@ namespace Sistemadeagendamentodeconsulta.Repositories
             }
         }
 
-        public async Task Alterar(Agendamento agendamento)
+        public async Task<Agendamento> Alterar(Agendamento agendamento)
         {
-            Agendamento agendamentoExistente = await _context.Agendamento.FindAsync(agendamento.Id);
+            agendamento.UsuarioId = agendamento.UsuarioId;
+            agendamento.Data = agendamento.Data;
+            agendamento.Horario = agendamento.Horario;
 
-            if(agendamentoExistente != null)
-            {
-                agendamentoExistente.Id = agendamento.Id;
-                agendamentoExistente.UsuarioId = agendamento.UsuarioId;
-                agendamentoExistente.Data = agendamento.Data;
-                agendamentoExistente.Horario = agendamento.Horario;
+            await _context.SaveChangesAsync();
 
-                await _context.SaveChangesAsync();
-            }
+            return agendamento;
         }
 
 
