@@ -49,15 +49,20 @@ namespace Sistemadeagendamentodeconsulta.Repositories
             }
         }
 
-        public async Task<Agendamento> Alterar(Agendamento agendamento)
+        public async Task<Agendamento> Alterar(decimal id, Agendamento agendamento)
         {
-            agendamento.UsuarioId = agendamento.UsuarioId;
-            agendamento.Data = agendamento.Data;
-            agendamento.Horario = agendamento.Horario;
+            Agendamento agendamentoExistente = await _context.Agendamento.FindAsync(id);
 
-            await _context.SaveChangesAsync();
+            if (agendamentoExistente != null)
+            {
+                agendamentoExistente.Data = agendamento.Data;
+                agendamentoExistente.Horario = agendamento.Horario;
 
-            return agendamento;
+                await _context.SaveChangesAsync();
+                return agendamento;
+            }
+
+            return null;
         }
 
 

@@ -71,15 +71,14 @@ namespace Sistemadeagendamentodeconsulta.Controllers
         [Route("consultar/{id}")]
         public async Task<IActionResult> AlterarAgendamentoPorId(decimal id, [FromBody] Agendamento input)
         {
-            Agendamento agendamento = await _agendamentoRepository.Consultar(id);
+            Agendamento agendamentoAlterado = await _agendamentoRepository.Alterar(id, input);
 
-            if (agendamento != null)
+            if(agendamentoAlterado != null)
             {
-                Agendamento agendamentoAlterado = await _agendamentoRepository.Alterar(input);
                 return new OkObjectResult(agendamentoAlterado);
             }
 
-            return BadRequest("Não foi possível atualizar o agendamento solicitado");
+            return BadRequest("Não foi possivel alterar o agendamento");
         }
     }
 }
