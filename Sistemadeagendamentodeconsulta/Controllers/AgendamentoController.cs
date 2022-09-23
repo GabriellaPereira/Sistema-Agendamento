@@ -80,5 +80,15 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 
             return BadRequest("Não foi possivel alterar o agendamento");
         }
+
+
+        [HttpDelete]
+        [Route("excluir/{id}")]
+        public async Task<IActionResult> Excluir(decimal id)
+        {
+             await _agendamentoRepository.Excluir(id);
+            return NoContent();
+        }
+
     }
 }

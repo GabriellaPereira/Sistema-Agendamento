@@ -2,6 +2,7 @@
 using Sistemadeagendamentodeconsulta.Models;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sistemadeagendamentodeconsulta.Repositories
@@ -20,12 +21,28 @@ namespace Sistemadeagendamentodeconsulta.Repositories
         public async Task<Agendamento> Inserir(Agendamento agendamento)
 
         {
+            agendamento.Id = await CriarIdAgendamento();
             _context.Agendamento.Add(agendamento);
             await _context.SaveChangesAsync();
 
             return agendamento;
 
         }
+
+        private async Task<decimal> CriarIdAgendamento()
+        {
+            Agendamento ultimoAgendamentoExistente = await _context.Agendamento
+                .OrderByDescending(u => u.Id)
+                .FirstOrDefaultAsync();
+
+            if (ultimoAgendamentoExistente != null)
+            {
+                return ultimoAgendamentoExistente.Id + 1;
+            }
+            return 1;
+        }
+
+
 
         public async Task<Agendamento> Consultar(decimal id)
         {
@@ -38,7 +55,7 @@ namespace Sistemadeagendamentodeconsulta.Repositories
             return await _context.Agendamento.ToListAsync();
         }
 
-        public async Task Excluir(int id)
+        public async Task Excluir(decimal id)
         {
             Agendamento agendamento = await _context.Agendamento.FindAsync(id);
 
