@@ -16,26 +16,20 @@ namespace Sistemadeagendamentodeconsulta.Controllers
     public class AgendamentoController : ControllerBase
     {
         private AgendamentoRepository _agendamentoRepository;
+        private StatusEmailRepository _statusEmailRepository;
         private ModelContext _context;
 
         public AgendamentoController()
         {
             _context = new ModelContext();
             _agendamentoRepository = new AgendamentoRepository(_context);
+            _statusEmailRepository = new StatusEmailRepository(_context);
 
         }
 
-        ///  <summary>
-        /// 0) Inserir agendamento
-        /// 1) Listar todos os agendamentos
-        /// 2) Listar agendamento especifico
-        /// 3) Alterar agendamento
-        /// 4) Cancelar agendamento
-        /// </summary>
-        /// <returns></returns>
-
         [HttpPost]
-        [Route("create")]
+        [Route("criar")]
+        [Authorize]
         public async Task<IActionResult> InserirAgendamento([FromBody] Agendamento input)
         {
             Agendamento agendamentoInput = await _agendamentoRepository.Inserir(input);
@@ -44,6 +38,7 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 
             if (agendamentoCriado != null)
             {
+                _statusEmailRepository.EnviarEmail(agendamentoCriado.UsuarioId,"confirmado");
                 return new OkObjectResult(agendamentoCriado);
             }
 
@@ -52,16 +47,17 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 
         [HttpGet]
         [Route("consultar")]
+        [Authorize]
         public async Task<IActionResult> ListarTodosAgendamentos()
         {
             List<Agendamento> listaDeAgendamentos = await _agendamentoRepository.Listar();
-            StatusEmailRepository notificacao = new StatusEmailRepository(_context);
-            await notificacao.Notificacao(1,"confirmado");
+            
             return new OkObjectResult(listaDeAgendamentos);
         }
 
         [HttpGet]
         [Route("consultar/{id}")]
+        [Authorize]
         public async Task<IActionResult> ListarAgendamentoPorId(decimal id)
         {
             Agendamento agendamento = await _agendamentoRepository.Consultar(id);
@@ -71,6 +67,7 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 
         [HttpPut]
         [Route("consultar/{id}")]
+        [Authorize]
         public async Task<IActionResult> AlterarAgendamentoPorId(decimal id, [FromBody] Agendamento input)
         {
             Agendamento agendamentoAlterado = await _agendamentoRepository.Alterar(id, input);
@@ -86,14 +83,13 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 
         [HttpDelete]
         [Route("excluir/{id}")]
+        [Authorize]
         public async Task<IActionResult> Excluir(decimal id)
         {
-             await _agendamentoRepository.Excluir(id);
+            await _agendamentoRepository.Excluir(id);
+
+            _statusEmailRepository.EnviarEmail(id, "cancelado");
             return NoContent();
         }
-
-
-       // [HttpPost]
-       //[Route("")]
     }
 }

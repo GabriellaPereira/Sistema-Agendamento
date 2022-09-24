@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sistemadeagendamentodeconsulta.Models;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
@@ -42,12 +43,9 @@ namespace Sistemadeagendamentodeconsulta.Repositories
                 _context.StatusEmail.Remove(statusEmail);
                 await _context.SaveChangesAsync();
             }
-
-
         }
 
-
-        public async Task Notificacao(decimal usuarioid, string status)
+        public void EnviarEmail(decimal usuarioid, string status)
         {
             //cria uma mensagem
             MailMessage mail = new MailMessage();
@@ -55,7 +53,7 @@ namespace Sistemadeagendamentodeconsulta.Repositories
             if (status == "confirmado")
             {
                 mail.Subject = "Agendamento confirmado.";
-                mail.Body = "Agendamento de sessão confirmado, para dia 24/09/2022 ás 18:30 Com Dr.Rodrigo Silva.";
+                mail.Body = "Agendamento de sessão, para dia 24/09/2022 ás 18:30, foi confirmado.";
             }
             else
             {
@@ -81,10 +79,6 @@ namespace Sistemadeagendamentodeconsulta.Repositories
 
             smtp.Send(mail);
         }
-
-
-
-
 
 
         public async Task Alterar(StatusEmail statusemail)
