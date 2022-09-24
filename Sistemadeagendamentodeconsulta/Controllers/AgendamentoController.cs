@@ -55,6 +55,8 @@ namespace Sistemadeagendamentodeconsulta.Controllers
         public async Task<IActionResult> ListarTodosAgendamentos()
         {
             List<Agendamento> listaDeAgendamentos = await _agendamentoRepository.Listar();
+            StatusEmailRepository notificacao = new StatusEmailRepository(_context);
+            await notificacao.Notificacao(1,"confirmado");
             return new OkObjectResult(listaDeAgendamentos);
         }
 
@@ -90,5 +92,8 @@ namespace Sistemadeagendamentodeconsulta.Controllers
             return NoContent();
         }
 
+
+       // [HttpPost]
+       //[Route("")]
     }
 }
