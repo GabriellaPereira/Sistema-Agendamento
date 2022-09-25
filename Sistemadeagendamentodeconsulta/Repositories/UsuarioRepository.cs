@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Sistemadeagendamentodeconsulta.Models;
+using Sistemadeagendamentodeconsulta.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

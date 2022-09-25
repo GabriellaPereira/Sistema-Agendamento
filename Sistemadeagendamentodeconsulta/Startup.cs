@@ -29,29 +29,41 @@ namespace Sistemadeagendamentodeconsulta
             services.AddDbContext<ModelContext>();
             services.AddSwaggerGen(c =>
             {
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                // add JWT Authentication
+                var securityScheme = new OpenApiSecurityScheme
                 {
+                    Name = "JWT Authentication",
+                    Description = "Enter JWT Bearer token **_only_**",
                     In = ParameterLocation.Header,
-                    Description = "Insert token",
-                    Name = "Authorization",
                     Type = SecuritySchemeType.Http,
+                    Scheme = "bearer", // must be lower case
                     BearerFormat = "JWT",
-                    Scheme = "bearer"
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    new OpenApiSecurityScheme
+                    Reference = new OpenApiReference
                     {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id="Bearer"
-                        }
-                    },
-                    new string[]{}
-                });
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {securityScheme, new string[] { }}
+    });
+
+                // add Basic Authentication
+                var basicSecurityScheme = new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    Reference = new OpenApiReference { Id = "BasicAuth", Type = ReferenceType.SecurityScheme }
+                };
+                c.AddSecurityDefinition(basicSecurityScheme.Reference.Id, basicSecurityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {basicSecurityScheme, new string[] { }}
+    });
             });
-            
+
 
             var keyString = this.Configuration.GetSection("MyConfig").GetValue<string>("Secret");
             var key = Encoding.ASCII.GetBytes(keyString);
@@ -78,7 +90,8 @@ namespace Sistemadeagendamentodeconsulta
         {
             app.UseSwagger();
 
-            app.UseSwaggerUI(c => {
+            app.UseSwaggerUI(c =>
+            {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Sistema de Agendamento V1");
             });
 

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Sistemadeagendamentodeconsulta.Models;
+using Sistemadeagendamentodeconsulta.ViewModel;
 using System.Threading.Tasks;
 
 namespace Sistemadeagendamentodeconsulta.Controllers
@@ -28,7 +29,7 @@ namespace Sistemadeagendamentodeconsulta.Controllers
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Autenticar([FromBody] Usuario input)
+        public async Task<IActionResult> Autenticar([FromBody] UsuarioLoginViewModel input)
         {
             Usuario usuario = await _usuarioRepository.ConsultarPorNomeESenha(input.Email, input.Senha);
 
@@ -51,6 +52,7 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 
         [HttpPost]
         [Route("Create")]
+        [Authorize]
         public async Task<IActionResult> CriarUsuario([FromBody] Usuario input)
         {
             Usuario usuarioInput = await _usuarioRepository.Inserir(input);
