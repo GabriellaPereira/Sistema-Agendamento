@@ -52,7 +52,7 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 
         [HttpPost]
         [Route("Create")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> CriarUsuario([FromBody] Usuario input)
         {
             Usuario usuarioInput = await _usuarioRepository.Inserir(input);

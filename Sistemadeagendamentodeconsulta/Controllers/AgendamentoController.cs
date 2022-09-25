@@ -38,7 +38,7 @@ namespace Sistemadeagendamentodeconsulta.Controllers
 
             if (agendamentoCriado != null)
             {
-                _statusEmailRepository.EnviarEmail(agendamentoCriado.UsuarioId,"confirmado");
+                //_statusEmailRepository.EnviarEmail(agendamentoCriado.UsuarioId,"confirmado");
                 return new OkObjectResult(agendamentoCriado);
             }
 
@@ -88,7 +88,7 @@ namespace Sistemadeagendamentodeconsulta.Controllers
         {
             await _agendamentoRepository.Excluir(id);
 
-            _statusEmailRepository.EnviarEmail(id, "cancelado");
+           // _statusEmailRepository.EnviarEmail(id, "cancelado");
             return NoContent();
         }
     }
